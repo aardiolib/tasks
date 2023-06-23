@@ -1,0 +1,87 @@
+﻿import promise;
+
+class tasks{
+	ctor(...){
+		var list = {...};
+		if( ..table.isArray(list[1]) ){
+			list = list[1];
+		}
+		this.tasks = list;
+		this.isRunning = false;
+		this.isTaskRunning = false;
+		this.pauseResolve = null;
+		this.result = ..table.array();
+		this.index = 1;
+		this.prom = null;
+	};
+	
+	start = function(){
+		return ..promise(function(resolve,reject){
+			if(this.prom){
+				this.prom.then(resolve,reject);
+				return ; 
+			}
+			if(this.isRunning){
+				return ; 
+			}
+			this.isRunning = true;
+			
+			..promise.async(function(){
+				while(this.index <= #this.tasks) {
+			    	this.isTaskRunning = true;
+			        try{
+			    		..table.push(this.result, ..promise.await(this.tasks[this.index]()));
+			    	}
+			    	catch(e){
+			    		reject(e);
+			    		this.prom = ..promise.reject(e);
+			    		this.isRunning = false;
+			    	}
+			    	
+			    	this.isTaskRunning = false;
+			    	
+			    	if(this.prom && this.prom.status == "rejected"){
+			    		return ; 
+			    	}
+					
+					this.index += 1;
+					if(!this.isRunning && this.index <= #this.tasks){
+						if(type(this.pauseResolve) == type.function){
+							this.pauseResolve()
+							this.pauseResolve = null;
+						}
+						reject();
+						return ;
+					}
+					
+				}
+				resolve(this.result);
+				this.prom = ..promise.resolve(this.result);
+				this.isRunning = false;
+			})();
+		});
+	}
+	pause = function(){
+		this.isRunning = false;
+		return ..promise(function(resolve,reject){
+			if(this.isTaskRunning){
+				this.pauseResolve = resolve;
+			}else {
+				resolve();
+			}
+		})
+	}
+}
+
+
+
+/**intellisense()
+tasks( = 可中断和恢复的任务序列，任务序列应该为 promise 数组\n依次顺序执行一系列任务\n所有任务全部完成后可得到执行结果
+tasks() = !tasksInfo.
+end intellisense**/
+
+
+/**intellisense(!tasksInfo)
+start( = 启动任务，返回 promise\n所有任务全部完成后可得到执行结果数组，当任务被拒绝或暂停任务时，返回的 promise 会拒绝。
+pause( = 暂停任务，返回 promise\n每个任务具有原子性，即不可中断，只能在两个任务中间暂停，在最后一个任务暂停没有意义，任务暂停后 promise 被实现
+end intellisense**/

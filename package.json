@@ -1,0 +1,19 @@
+{
+  "name": "@aardiolib/tasks",
+  "version": "1.0.0",
+  "description": "任务序列",
+  "dependencies": {
+    "@aardiolib/promise": "^1.0.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "keywords": [
+    "aardio",
+    "tasks",
+    "aardiolib"
+  ],
+  "author": "Runy(2439702727@qq.com)",
+  "license": "ISC"
+}
